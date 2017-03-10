@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # 
-# Copyright 2017 <+YOU OR YOUR COMPANY+>.
+# Copyright 2017 Matt Hostetter.
 # 
 # This is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 import numpy
 from gnuradio import gr
+import pmt
 
 class sink(gr.sync_block):
     """
@@ -29,12 +30,14 @@ class sink(gr.sync_block):
     def __init__(self, filename, table_name_key):
         gr.sync_block.__init__(self,
             name="sink",
-            in_sig=[<+numpy.float+>],
+            in_sig=None,
             out_sig=None)
+
+        message_port_register_in(pmt.string_to_symbol('pdu'))
 
 
     def work(self, input_items, output_items):
-        in0 = input_items[0]
-        # <+signal processing here+>
-        return len(input_items[0])
+        assert(False)
 
+    def add_pdu_to_database():
+        return
