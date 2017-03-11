@@ -4,7 +4,7 @@
   <key>sqlite_sink</key>
   <category>[SQLite]</category>
   <import>import sqlite</import>
-  <make>sqlite.sink($filename, $table_name, $vector_column_name, $primary_key, $fixed_position_columns)</make>
+  <make>sqlite.sink($filename, $table_name, $vector_column_name, $fixed_position_columns)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
@@ -18,18 +18,12 @@
   <param>
     <name>Table Name</name>
     <key>table_name</key>
-    <value>table</value>
     <type>string</type>
   </param>
   <param>
     <name>PDU Vector Column Name</name>
     <key>vector_column_name</key>
     <value>data</value>
-    <type>string</type>
-  </param>
-  <param>
-    <name>Primary Key</name>
-    <key>primary_key</key>
     <type>string</type>
   </param>
   <param>

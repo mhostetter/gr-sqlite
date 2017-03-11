@@ -28,7 +28,7 @@ class sink(gr.sync_block):
     """
     docstring for block sink
     """
-    def __init__(self, filename, table_name, vector_column_name, primary_key, fixed_position_columns):
+    def __init__(self, filename, table_name, vector_column_name, fixed_position_columns):
         gr.sync_block.__init__(self,
             name="sink",
             in_sig=None,
@@ -37,7 +37,6 @@ class sink(gr.sync_block):
 
         self.table_name = table_name
         self.vector_column_name = vector_column_name
-        self.primary_key = primary_key if not '' else None
         self.fixed_position_columns = fixed_position_columns if type(fixed_position_columns) is list else []
 
         # Establish database connection
@@ -57,16 +56,9 @@ class sink(gr.sync_block):
             meta = pmt.to_python(pmt.car(pdu))
             vector = pmt.to_python(pmt.cdr(pdu))
 
-            print 'meta\n', meta
-            print 'vector\n', vector
-
             # Create table if haven't already
             if not self.created_table:
-                # Place primary key first in columns if not already placed in order
-                if self.primary_key is not '' and self.primary_key not in self.fixed_position_columns:
-                    self.fixed_position_columns.insert(0, self.primary_key)
-
-                # Find the non-fixed position columns and sort alphabetically
+                # Find the non fixed-position columns and sort alphabetically
                 non_fixed_position_columns = meta.keys()
                 for key in self.fixed_position_columns:
                     try:
@@ -75,14 +67,9 @@ class sink(gr.sync_block):
                         print 'WARNING: Fixed-position column %s is not a key of the input PDU' % (key)
 
                 self.ordered_keys = self.fixed_position_columns + sorted(non_fixed_position_columns)
-                col_defs = '('
-                for key in self.ordered_keys:
-                    col_defs += key + (', ' if key != self.primary_key else ' PRIMARY KEY, ')
-                col_defs += self.vector_column_name + ')'
+                cols = '(' + ', '.join(self.ordered_keys) + ', ' + self.vector_column_name + ')'
 
-                print 'col_defs\n', col_defs
-
-                self.c.execute('CREATE TABLE IF NOT EXISTS ' + self.table_name + ' ' + col_defs)
+                self.c.execute('CREATE TABLE IF NOT EXISTS ' + self.table_name + ' ' + cols)
                 self.conn.commit()
                 self.created_table = True
 
