@@ -15,6 +15,7 @@ There are example GNU Radio Companion (.grc) files located in `/gr-sqlite/exampl
 ### Blocks
 #### SQLite Sink
 The SQLite Sink block is designed to take a PDU message as input and insert it into one table in a SQLite database.  The PDU metadata is stored with columns equal to their keys and the PDU vector is stored with column name `data` and type BLOB.  Only one type of PDU should be connected to a SQLite Sink.
+
 | Parameter | Description |
 | --- | --- |
 | **Filename** | The database filename. |
