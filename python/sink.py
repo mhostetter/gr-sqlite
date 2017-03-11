@@ -28,7 +28,7 @@ class sink(gr.sync_block):
     """
     docstring for block sink
     """
-    def __init__(self, filename, table_name, primary_key, fixed_position_columns):
+    def __init__(self, filename, table_name, vector_column_name, primary_key, fixed_position_columns):
         gr.sync_block.__init__(self,
             name="sink",
             in_sig=None,
@@ -36,6 +36,7 @@ class sink(gr.sync_block):
 
 
         self.table_name = table_name
+        self.vector_column_name = vector_column_name
         self.primary_key = primary_key if not '' else None
         self.fixed_position_columns = fixed_position_columns if type(fixed_position_columns) is list else []
 
@@ -77,7 +78,7 @@ class sink(gr.sync_block):
                 col_defs = '('
                 for key in self.ordered_keys:
                     col_defs += key + (', ' if key != self.primary_key else ' PRIMARY KEY, ')
-                col_defs += 'data)'
+                col_defs += self.vector_column_name + ')'
 
                 print 'col_defs\n', col_defs
 
@@ -85,7 +86,7 @@ class sink(gr.sync_block):
                 self.conn.commit()
                 self.created_table = True
 
-            cols = '(' + ', '.join(self.ordered_keys) + ', data)'
+            cols = '(' + ', '.join(self.ordered_keys) + ', ' + self.vector_column_name + ')'
             val_qs = '(' + ', '.join(['?']*(len(self.ordered_keys)+1)) + ')'
             vals = [meta[key] if key in meta.keys() else None for key in self.ordered_keys]
             vals.append(buffer(vector))
