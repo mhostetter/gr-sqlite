@@ -1,19 +1,36 @@
 <?xml version="1.0"?>
 <block>
-  <name>sink</name>
+  <name>SQLite Sink</name>
   <key>sqlite_sink</key>
-  <category>[sqlite]</category>
+  <category>[SQLite]</category>
   <import>import sqlite</import>
-  <make>sqlite.sink($filename, $table_name_key)</make>
+  <make>sqlite.sink($filename, $table_name, $primary_key, $fixed_position_columns)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
        * key (makes the value accessible as $keyname, e.g. in the make node)
        * type -->
   <param>
-    <name>...</name>
-    <key>...</key>
-    <type>...</type>
+    <name>Filename</name>
+    <key>filename</key>
+    <type>file_save</type>
+  </param>
+  <param>
+    <name>Table Name</name>
+    <key>table_name</key>
+    <value>table</value>
+    <type>string</type>
+  </param>
+  <param>
+    <name>Primary Key</name>
+    <key>primary_key</key>
+    <type>string</type>
+  </param>
+  <param>
+    <name>Fixed-Position Columns</name>
+    <key>fixed_position_columns</key>
+    <value>[]</value>
+    <type>raw</type>
   </param>
 
   <!-- Make one 'sink' node per input. Sub-nodes:
@@ -22,17 +39,8 @@
        * vlen
        * optional (set to 1 for optional inputs) -->
   <sink>
-    <name>in</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
+    <name>pdu</name>
+    <type>message</type>
+    <optional>1</optional>
   </sink>
-
-  <!-- Make one 'source' node per output. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
-  <source>
-    <name>out</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
-  </source>
 </block>
