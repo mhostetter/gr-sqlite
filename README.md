@@ -31,15 +31,15 @@ Because the metadata key/value pairs are unordered, it's impossible for the user
 
 The SQLite Triggered Source block is designed to take asynchronous message triggers and output PDU messages generated from the rows of one table in a SQLite database.  The **PDU Vector Column Name** column of table **Table Name** will be formatted into the PDU vector (`pmt::cdr`) and the remaining columns will be formatted into a dictionary in the PDU metadata (`pmt::car`).
 
-Additional SQL query conditions can be enforced through **SQL Conditional**.  The condition should start with the `WHERE` keyword.  **WARNING:** This string will be entered directly into the SQL query with no sanitization.  Buyer beware!
+Additional SQL query conditions can be enforced through the **SQL Condition**.  The condition should start with the `WHERE` keyword.  **WARNING:** This string will be entered directly into the SQL query with no sanitization.  Buyer beware!
 
-Example **SQL Conditional** fields include:
+Example **SQL Condition** fields include:
 
-* `WHERE timestamp > 1489233600`
-* `WHERE timestamp > ` + (datetime.datetime(year=2017, month=3, day=11, hour=12, minute=0) - datetime.datetime.utcfromtimestamp(0)).total_seconds()
-* `WHERE timestamp IS NOT NULL`
-* `WHERE snr > 20.0'
-* `WHERE frequency > -1000 AND frequency < 1000`
+* `'WHERE timestamp > 1489233600'`
+* `'WHERE timestamp > ' + (datetime.datetime(year=2017, month=3, day=11, hour=12, minute=0) - datetime.datetime.utcfromtimestamp(0)).total_seconds()`
+* `'WHERE timestamp IS NOT NULL'`
+* `'WHERE snr > 20.0'
+* `'WHERE frequency > -1000 AND frequency < 1000'`
 
 ### Viewing the Database
 I've personally had great success using [DbVisualizer](https://www.dbvis.com/) to inspect, query, and modify databases.  If you don't have a SQLite viewer, I suggest you look into it.  It's supported on Linux, Mac, and Windows.
