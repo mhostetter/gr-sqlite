@@ -19,7 +19,7 @@
 # Boston, MA 02110-1301, USA.
 # 
 
-import numpy
+import numpy as np
 from gnuradio import gr
 import pmt
 import sqlite3
@@ -54,7 +54,9 @@ class sink(gr.sync_block):
         # Only process PDUs
         if pmt.is_pair(pdu):
             meta = pmt.to_python(pmt.car(pdu))
-
+            if meta is None:
+                meta = dict()
+            
             # Create table if we haven't already
             if not self.created_table:
                 # Find the non fixed-position columns and sort alphabetically
@@ -64,7 +66,7 @@ class sink(gr.sync_block):
                         non_fixed_position_columns.remove(key)
                     except:
                         continue
-                
+
                 ordered_keys = self.fixed_position_columns + sorted(non_fixed_position_columns)
                 if self.vector_column_name not in ordered_keys:
                     # Add the vector column at the end unless otherwise specified in the Fixed-Position Columns list
@@ -82,7 +84,8 @@ class sink(gr.sync_block):
                 self.column_names = [description[0] for description in self.c.description]
 
             # Set the PDU vector into the meta dictionary with appropriate key 
-            meta[self.vector_column_name] = buffer(pmt.to_python(pmt.cdr(pdu)))
+            # meta[self.vector_column_name] = buffer(pmt.to_python(pmt.cdr(pdu)))
+            meta[self.vector_column_name] = buffer(pmt.serialize_str(pmt.cdr(pdu)))
 
             # Insert PDU into table, with only columns that already exist in the table
             valid_keys = [key for key in meta.keys() if key in self.column_names]
