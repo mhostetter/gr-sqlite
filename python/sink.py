@@ -63,16 +63,16 @@ class sink(gr.sync_block):
                     try:
                         non_fixed_position_columns.remove(key)
                     except:
-                        print 'WARNING: Fixed-position column %s is not a key of the input PDU' % (key)
-
+                        continue
+                
                 ordered_keys = self.fixed_position_columns + sorted(non_fixed_position_columns)
-                if self.vector_column_name in ordered_keys:
-                    cols = '(' + ', '.join(ordered_keys) + ')'
-                else:
+                if self.vector_column_name not in ordered_keys:
                     # Add the vector column at the end unless otherwise specified in the Fixed-Position Columns list
                     cols = '(' + ', '.join(ordered_keys) + ', ' + self.vector_column_name + ')'
+                else:
+                    cols = '(' + ', '.join(ordered_keys) + ')'
 
-                # Attempt to create table
+                # Attempt to create the table
                 self.c.execute('CREATE TABLE IF NOT EXISTS ' + self.table_name + ' ' + cols)
                 self.conn.commit()
                 self.created_table = True
@@ -84,7 +84,7 @@ class sink(gr.sync_block):
             # Set the PDU vector into the meta dictionary with appropriate key 
             meta[self.vector_column_name] = buffer(pmt.to_python(pmt.cdr(pdu)))
 
-            # Insert PDU into table, with only keys that match the table
+            # Insert PDU into table, with only columns that already exist in the table
             valid_keys = [key for key in meta.keys() if key in self.column_names]
             cols = '(' + ', '.join(valid_keys) + ')'
             question_marks = '(' + ', '.join(['?']*len(valid_keys)) + ')'
