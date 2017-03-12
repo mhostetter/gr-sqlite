@@ -18,5 +18,6 @@
 # Boston, MA 02110-1301, USA.
 
 install(FILES
-    sqlite_sink.xml DESTINATION share/gnuradio/grc/blocks
+    sqlite_sink.xml
+    sqlite_triggered_source.xml DESTINATION share/gnuradio/grc/blocks
 )

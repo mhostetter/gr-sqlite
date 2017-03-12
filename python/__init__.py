@@ -32,4 +32,5 @@ except ImportError:
 
 # import any pure python here
 from sink import sink
+from triggered_source import triggered_source
 #
