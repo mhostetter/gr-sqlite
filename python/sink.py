@@ -54,9 +54,8 @@ class sink(gr.sync_block):
         # Only process PDUs
         if pmt.is_pair(pdu):
             meta = pmt.to_python(pmt.car(pdu))
-            vector = pmt.to_python(pmt.cdr(pdu))
 
-            # Create table if haven't already
+            # Create table if we haven't already
             if not self.created_table:
                 # Find the non fixed-position columns and sort alphabetically
                 non_fixed_position_columns = meta.keys()
@@ -66,19 +65,32 @@ class sink(gr.sync_block):
                     except:
                         print 'WARNING: Fixed-position column %s is not a key of the input PDU' % (key)
 
-                self.ordered_keys = self.fixed_position_columns + sorted(non_fixed_position_columns)
-                cols = '(' + ', '.join(self.ordered_keys) + ', ' + self.vector_column_name + ')'
+                ordered_keys = self.fixed_position_columns + sorted(non_fixed_position_columns)
+                if self.vector_column_name in ordered_keys:
+                    cols = '(' + ', '.join(ordered_keys) + ')'
+                else:
+                    # Add the vector column at the end unless otherwise specified in the Fixed-Position Columns list
+                    cols = '(' + ', '.join(ordered_keys) + ', ' + self.vector_column_name + ')'
 
+                # Attempt to create table
                 self.c.execute('CREATE TABLE IF NOT EXISTS ' + self.table_name + ' ' + cols)
                 self.conn.commit()
                 self.created_table = True
 
-            cols = '(' + ', '.join(self.ordered_keys) + ', ' + self.vector_column_name + ')'
-            val_qs = '(' + ', '.join(['?']*(len(self.ordered_keys)+1)) + ')'
-            vals = [meta[key] if key in meta.keys() else None for key in self.ordered_keys]
-            vals.append(buffer(vector))
+                # Get list of true column names (whether we just made the table or it already existed)
+                self.c.execute('SELECT * FROM ' + self.table_name)
+                self.column_names = [description[0] for description in self.c.description]
 
-            self.c.execute('INSERT INTO ' + self.table_name + ' ' + cols + ' VALUES ' + val_qs, vals)
+            # Set the PDU vector into the meta dictionary with appropriate key 
+            meta[self.vector_column_name] = buffer(pmt.to_python(pmt.cdr(pdu)))
+
+            # Insert PDU into table, with only keys that match the table
+            valid_keys = [key for key in meta.keys() if key in self.column_names]
+            cols = '(' + ', '.join(valid_keys) + ')'
+            question_marks = '(' + ', '.join(['?']*len(valid_keys)) + ')'
+            vals = [meta[key] for key in valid_keys]
+
+            self.c.execute('INSERT INTO ' + self.table_name + ' ' + cols + ' VALUES ' + question_marks, vals)
             self.conn.commit()
 
 
