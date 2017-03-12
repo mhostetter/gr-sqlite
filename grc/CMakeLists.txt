@@ -19,5 +19,6 @@
 
 install(FILES
     sqlite_sink.xml
-    sqlite_triggered_source.xml DESTINATION share/gnuradio/grc/blocks
+    sqlite_triggered_source.xml
+    sqlite_timed_source.xml DESTINATION share/gnuradio/grc/blocks
 )
