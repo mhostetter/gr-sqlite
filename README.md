@@ -5,7 +5,7 @@ A GNU Radio Out-Of-Tree (OOT) Module to write to and read from SQLite databases.
 ## Features
 * Supports `INSERT`-ing PDU messages into a SQLite table.
 * Supports outputting PDUs from message-triggered `SELECT` statements.
-* Supports timed PDU output based of a UNIX timestamp in the SQLite database.
+* Supports timed PDU output based off UNIX timestamps in the SQLite table.
 
 ## Usage
 ### GNU Radio
