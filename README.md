@@ -41,6 +41,11 @@ Example **SQL Condition** fields include:
 * `'WHERE snr > 20.0'`
 * `'WHERE frequency > -1000 AND frequency < 1000'`
 
+#### SQLite Timed Source
+![SQLite Timed Source](https://github.com/mhostetter/gr-sqlite/blob/master/docs/sqlite_timed_source.png)
+
+The SQLite Timed Source block is designed to output PDU messages generated from the rows of one table in a SQLite database in realtime.  The block requires a UNIX timestamp in the database, specified by **Timestamp Column Name**.  When the flowgraph starts, the block will output rows at **Realtime Factor** times realtime starting at **Start Timestamp**.  The **PDU Vector Column Name** column of table **Table Name** will be formatted into the PDU vector (`pmt::cdr`) and the remaining columns will be formatted into a dictionary in the PDU metadata (`pmt::car`).
+
 ### Viewing the Database
 I've personally had great success using [DbVisualizer](https://www.dbvis.com/) to inspect, query, and modify databases.  If you don't have a SQLite viewer, I suggest you look into it.  It's supported on Linux, Mac, and Windows.
 
