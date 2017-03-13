@@ -13,6 +13,7 @@ There are example GNU Radio Companion (.grc) files located in `/gr-sqlite/exampl
 
 * `sqlite_sink.grc` An example of how to log PDUs into a SQLite database
 * `sqlite_triggered_source.grc` An example of how to generate PDU from a database table upon a message trigger
+* `sqlite_timed_source.grc` An example of how to generate timed PDUs from a database
 
 
 ### Blocks
