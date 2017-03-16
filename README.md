@@ -37,9 +37,10 @@ Example **SQL Condition** fields include:
 
 * `'WHERE timestamp > 1489233600'`
 * `'WHERE timestamp > ' + (datetime.datetime(year=2017, month=3, day=11, hour=12, minute=0) - datetime.datetime.utcfromtimestamp(0)).total_seconds()`
-* `'WHERE timestamp IS NOT NULL'`
+* `'WHERE timestamp IS NOT NULL ORDER BY timestamp ASC'`
 * `'WHERE snr > 20.0'`
 * `'WHERE frequency > -1000 AND frequency < 1000'`
+* `'ORDER BY timestamp ASC'`
 
 #### SQLite Timed Source
 ![SQLite Timed Source](https://github.com/mhostetter/gr-sqlite/blob/master/docs/sqlite_timed_source.png)
