@@ -1,13 +1,15 @@
-title: The SQLITE OOT Module
-brief: Short description of gr-sqlite
+title: gr-sqlite
+brief: GNU Radio OOT module to write to and read from SQLite databases
 tags: # Tags are arbitrary, but look at CGRAN what other authors are using
   - sdr
+  - sqlite
+  - database
 author:
-  - Author Name <authors@email.address>
+  - Matt Hostetter <matthostetter@gmail.com>
 copyright_owner:
-  - Copyright Owner 1
+  - Matt Hostetter
 license:
-#repo: # Put the URL of the repository here, or leave blank for default
+repo: https://github.com/mhostetter/gr-sqlite
 #website: <module_website> # If you have a separate project website, put it here
 #icon: <icon_url> # Put a URL to a square image here that will be used as an icon on CGRAN
 ---
