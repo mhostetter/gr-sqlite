@@ -44,76 +44,71 @@ class timed_source(gr.sync_block):
         self.db_start_timestamp = db_start_timestamp
         self.realtime_factor = realtime_factor
 
+        # Setup run thread
+        self.thread = threading.Thread(target=self.run)
+
         # Establish database connection
         self.conn = sqlite3.connect(filename, check_same_thread=False)
+        self.conn.row_factory = sqlite3.Row
         self.c = self.conn.cursor()
-        self.conn.text_factory = str
 
-        # Start SQL query and then fetch one row per trigger
+        if self.db_start_timestamp is None:
+            # Get first timestamp from database
+            self.c.execute(
+                "SELECT * FROM " + self.table_name + " " +
+                "ORDER BY " + self.timestamp_column_name + " ASC" + " " +
+                "LIMIT 1"
+            )
+            row = self.c.fetchone()
+            self.db_start_timestamp = int(np.floor(row[self.timestamp_column_name]))
+
+        # Start SQL query and then fetch one row per time delay
         self.c.execute(
             "SELECT * FROM " + self.table_name + " " +
             "WHERE " + self.timestamp_column_name + " >= " + str(self.db_start_timestamp) + " " +
             "ORDER BY " + self.timestamp_column_name + " ASC"
         )
 
-        self.message_port_register_out(pmt.string_to_symbol("pdu"))
+        self.message_port_register_out(pmt.to_pmt("pdu"))
 
 
     def start(self):
-        print "in start"
-        self.finished = False
         self.block_start_time = datetime.datetime.utcnow()
         self.block_sim_delta = self.block_start_time - datetime.datetime.utcfromtimestamp(self.db_start_timestamp)
-
-        self.run()
-
+        self.thread.start()
         return True
 
 
     def stop(self):
-        self.finished = True
-        # self.thread.interrupt()
-        # self.thread.join()
-
+        self.thread.join()
         return True
 
 
     def run(self):
-        while not self.finished:
-            # Read next PDU
-            row = self.c.fetchone()
+        for row in self.c:
+            # Format into PDU
+            meta = dict(row)
+            vector = meta.pop(self.vector_column_name, None)
+            vector = pmt.to_python(pmt.deserialize_str(str(vector)))
 
-            if row is not None:
-                # Format into PDU
-                meta = dict()
-                vector = None
-                for idx, col in enumerate(self.c.description):
-                    column = col[0]
-                    if column == self.vector_column_name:
-                        vector = pmt.to_python(pmt.deserialize_str(str(row[idx])))
-                    else:
-                        meta[col[0]] = row[idx]
+            # Calculate time to sleep
+            current_sim_time = self.calculate_sim_time()
+            pdu_time = datetime.datetime.utcfromtimestamp(meta[self.timestamp_column_name])
+            seconds_to_sleep = (pdu_time - current_sim_time).total_seconds()
 
-                # Calculate time to sleep
-                current_sim_time = self.calculate_sim_time()
-                pdu_time = datetime.datetime.utcfromtimestamp(meta[self.timestamp_column_name])
-                seconds_to_sleep = (pdu_time - current_sim_time).total_seconds()
+            # Sleep until PDU publish time
+            if seconds_to_sleep > 0.0:
+                time.sleep(seconds_to_sleep)
 
-                # Sleep until PDU publish time
-                if seconds_to_sleep > 0.0:
-                    time.sleep(seconds_to_sleep)
+            # Print current sim time
+            print "pdu_time", pdu_time
+            print "current_sim_time", self.calculate_sim_time()
 
-                # Print current sim time
-                print "pdu_time", pdu_time
-                print "current_sim_time", self.calculate_sim_time()
-
-                # Publish PDU
+            # Publish PDU
+            try:
                 pdu = pmt.cons(pmt.to_pmt(meta), pmt.to_pmt(vector))
-                self.message_port_pub(pmt.string_to_symbol("pdu"), pdu)
-
-                if self.finished:
-                    return
-            else:
+                self.message_port_pub(pmt.to_pmt("pdu"), pdu)
+            except:
                 return
 
 
@@ -124,4 +119,4 @@ class timed_source(gr.sync_block):
 
 
     def work(self, input_items, output_items):
-        assert(False)
+        assert False
