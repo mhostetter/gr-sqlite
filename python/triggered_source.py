@@ -72,4 +72,4 @@ class triggered_source(gr.sync_block):
 
 
     def work(self, input_items, output_items):
-        assert(False)
+        assert False

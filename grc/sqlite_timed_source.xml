@@ -35,8 +35,8 @@
   <param>
     <name>Start Timestamp</name>
     <key>db_start_timestamp</key>
-    <value>int((datetime.datetime(year=2017, month=3, day=11, hour=12, minute=0) - datetime.datetime.utcfromtimestamp(0)).total_seconds())</value>
-    <type>int</type>
+    <value>None</value>
+    <type>raw</type>
   </param>
   <param>
     <name>Realtime Factor</name>
