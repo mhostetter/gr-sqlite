@@ -100,10 +100,6 @@ class timed_source(gr.sync_block):
             if seconds_to_sleep > 0.0:
                 time.sleep(seconds_to_sleep)
 
-            # Print current sim time
-            print "pdu_time", pdu_time
-            print "current_sim_time", self.calculate_sim_time()
-
             # Publish PDU
             try:
                 pdu = pmt.cons(pmt.to_pmt(meta), pmt.to_pmt(vector))
