@@ -1,23 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# 
+#
 # Copyright 2017 Matt Hostetter.
-# 
+#
 # This is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
-# 
+#
 # This software is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this software; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
-# 
+#
 
 import numpy as np
 from gnuradio import gr
@@ -56,7 +56,7 @@ class sink(gr.sync_block):
             meta = pmt.to_python(pmt.car(pdu))
             if meta is None:
                 meta = dict()
-            
+
             # Create table if we haven't already
             if not self.created_table:
                 # Find the non fixed-position columns and sort alphabetically
@@ -83,7 +83,7 @@ class sink(gr.sync_block):
                 self.c.execute('SELECT * FROM ' + self.table_name)
                 self.column_names = [description[0] for description in self.c.description]
 
-            # Set the PDU vector into the meta dictionary with appropriate key 
+            # Set the PDU vector into the meta dictionary with appropriate key
             # meta[self.vector_column_name] = buffer(pmt.to_python(pmt.cdr(pdu)))
             meta[self.vector_column_name] = buffer(pmt.serialize_str(pmt.cdr(pdu)))
 

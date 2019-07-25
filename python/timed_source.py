@@ -1,23 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# 
+#
 # Copyright 2017 <+YOU OR YOUR COMPANY+>.
-# 
+#
 # This is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
-# 
+#
 # This software is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this software; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
-# 
+#
 
 import numpy as np
 from gnuradio import gr
@@ -97,7 +97,7 @@ class timed_source(gr.sync_block):
                 current_sim_time = self.calculate_sim_time()
                 pdu_time = datetime.datetime.utcfromtimestamp(meta[self.timestamp_column_name])
                 seconds_to_sleep = (pdu_time - current_sim_time).total_seconds()
-                
+
                 # Sleep until PDU publish time
                 if seconds_to_sleep > 0.0:
                     time.sleep(seconds_to_sleep)
