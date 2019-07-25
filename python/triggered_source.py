@@ -20,9 +20,10 @@
 #
 
 import numpy as np
-from gnuradio import gr
-import pmt
 import sqlite3
+
+import pmt
+from gnuradio import gr
 
 class triggered_source(gr.sync_block):
     """
@@ -44,11 +45,11 @@ class triggered_source(gr.sync_block):
         self.conn.text_factory = str
 
         # Start SQL query and then fetch one row per trigger
-        self.c.execute('SELECT * FROM ' + self.table_name + ' ' + self.sql_condition)
+        self.c.execute("SELECT * FROM " + self.table_name + " " + self.sql_condition)
 
-        self.message_port_register_in(pmt.string_to_symbol('trigger'))
-        self.message_port_register_out(pmt.string_to_symbol('pdu'))
-        self.set_msg_handler(pmt.string_to_symbol('trigger'), self.fetch_new_pdu)
+        self.message_port_register_in(pmt.string_to_symbol("trigger"))
+        self.message_port_register_out(pmt.string_to_symbol("pdu"))
+        self.set_msg_handler(pmt.string_to_symbol("trigger"), self.fetch_new_pdu)
 
 
     def fetch_new_pdu(self, trigger):
@@ -67,7 +68,7 @@ class triggered_source(gr.sync_block):
                     meta[col[0]] = row[idx]
 
             pdu = pmt.cons(pmt.to_pmt(meta), pmt.to_pmt(vector))
-            self.message_port_pub(pmt.string_to_symbol('pdu'), pdu)
+            self.message_port_pub(pmt.string_to_symbol("pdu"), pdu)
 
 
     def work(self, input_items, output_items):

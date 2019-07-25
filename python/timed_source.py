@@ -19,13 +19,14 @@
 # Boston, MA 02110-1301, USA.
 #
 
-import numpy as np
-from gnuradio import gr
-import pmt
-import time
 import datetime
 import threading
 import sqlite3
+import time
+import numpy as np
+
+import pmt
+from gnuradio import gr
 
 class timed_source(gr.sync_block):
     """
@@ -50,16 +51,16 @@ class timed_source(gr.sync_block):
 
         # Start SQL query and then fetch one row per trigger
         self.c.execute(
-            'SELECT * FROM ' + self.table_name + ' ' +
-            'WHERE ' + self.timestamp_column_name + ' >= ' + str(self.db_start_timestamp) + ' ' +
-            'ORDER BY ' + self.timestamp_column_name + ' ASC'
+            "SELECT * FROM " + self.table_name + " " +
+            "WHERE " + self.timestamp_column_name + " >= " + str(self.db_start_timestamp) + " " +
+            "ORDER BY " + self.timestamp_column_name + " ASC"
         )
 
-        self.message_port_register_out(pmt.string_to_symbol('pdu'))
+        self.message_port_register_out(pmt.string_to_symbol("pdu"))
 
 
     def start(self):
-        print 'in start'
+        print "in start"
         self.finished = False
         self.block_start_time = datetime.datetime.utcnow()
         self.block_sim_delta = self.block_start_time - datetime.datetime.utcfromtimestamp(self.db_start_timestamp)
@@ -103,12 +104,12 @@ class timed_source(gr.sync_block):
                     time.sleep(seconds_to_sleep)
 
                 # Print current sim time
-                print 'pdu_time', pdu_time
-                print 'current_sim_time', self.calculate_sim_time()
+                print "pdu_time", pdu_time
+                print "current_sim_time", self.calculate_sim_time()
 
                 # Publish PDU
                 pdu = pmt.cons(pmt.to_pmt(meta), pmt.to_pmt(vector))
-                self.message_port_pub(pmt.string_to_symbol('pdu'), pdu)
+                self.message_port_pub(pmt.string_to_symbol("pdu"), pdu)
 
                 if self.finished:
                     return

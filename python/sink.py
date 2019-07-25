@@ -20,9 +20,10 @@
 #
 
 import numpy as np
-from gnuradio import gr
-import pmt
 import sqlite3
+
+import pmt
+from gnuradio import gr
 
 class sink(gr.sync_block):
     """
@@ -44,10 +45,10 @@ class sink(gr.sync_block):
         self.conn = sqlite3.connect(filename, check_same_thread=False)
         self.c = self.conn.cursor()
         self.conn.text_factory = str
-        self.c.execute('PRAGMA journal_mode=WAL')
+        self.c.execute("PRAGMA journal_mode=WAL")
 
-        self.message_port_register_in(pmt.string_to_symbol('pdu'))
-        self.set_msg_handler(pmt.string_to_symbol('pdu'), self.insert_pdu_into_table)
+        self.message_port_register_in(pmt.string_to_symbol("pdu"))
+        self.set_msg_handler(pmt.string_to_symbol("pdu"), self.insert_pdu_into_table)
 
 
     def insert_pdu_into_table(self, pdu):
@@ -57,7 +58,7 @@ class sink(gr.sync_block):
             if meta is None:
                 meta = dict()
 
-            # Create table if we haven't already
+            # Create table if we haven"t already
             if not self.created_table:
                 # Find the non fixed-position columns and sort alphabetically
                 non_fixed_position_columns = meta.keys()
@@ -70,17 +71,17 @@ class sink(gr.sync_block):
                 ordered_keys = self.fixed_position_columns + sorted(non_fixed_position_columns)
                 if self.vector_column_name not in ordered_keys:
                     # Add the vector column at the end unless otherwise specified in the Fixed-Position Columns list
-                    cols = '(' + ', '.join(ordered_keys) + ', ' + self.vector_column_name + ')'
+                    cols = "(" + ", ".join(ordered_keys) + ", " + self.vector_column_name + ")"
                 else:
-                    cols = '(' + ', '.join(ordered_keys) + ')'
+                    cols = "(" + ", ".join(ordered_keys) + ")"
 
                 # Attempt to create the table
-                self.c.execute('CREATE TABLE IF NOT EXISTS ' + self.table_name + ' ' + cols)
+                self.c.execute("CREATE TABLE IF NOT EXISTS " + self.table_name + " " + cols)
                 self.conn.commit()
                 self.created_table = True
 
                 # Get list of true column names (whether we just made the table or it already existed)
-                self.c.execute('SELECT * FROM ' + self.table_name)
+                self.c.execute("SELECT * FROM " + self.table_name)
                 self.column_names = [description[0] for description in self.c.description]
 
             # Set the PDU vector into the meta dictionary with appropriate key
@@ -89,11 +90,11 @@ class sink(gr.sync_block):
 
             # Insert PDU into table, with only columns that already exist in the table
             valid_keys = [key for key in meta.keys() if key in self.column_names]
-            cols = '(' + ', '.join(valid_keys) + ')'
-            question_marks = '(' + ', '.join(['?']*len(valid_keys)) + ')'
+            cols = "(" + ", ".join(valid_keys) + ")"
+            question_marks = "(" + ", ".join(["?"]*len(valid_keys)) + ")"
             vals = [meta[key] for key in valid_keys]
 
-            self.c.execute('INSERT INTO ' + self.table_name + ' ' + cols + ' VALUES ' + question_marks, vals)
+            self.c.execute("INSERT INTO " + self.table_name + " " + cols + " VALUES " + question_marks, vals)
             self.conn.commit()
 
 
