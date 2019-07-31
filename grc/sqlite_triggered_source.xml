@@ -13,7 +13,7 @@
   <param>
     <name>Filename</name>
     <key>filename</key>
-    <type>file_save</type>
+    <type>file_open</type>
   </param>
   <param>
     <name>Table Name</name>
